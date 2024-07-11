@@ -11,6 +11,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Screen1">
+        {/* Add the screens here */}
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat" component={Chat} />
       </Stack.Navigator>

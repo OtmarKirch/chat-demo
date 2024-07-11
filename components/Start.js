@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import PersonSvg from './PersonSvg';
+import PersonSvg from './PersonSvg'; // symbol used in input box for the user name
 
 const Start = ({ navigation }) => {
   const [colors, setColors] = useState([
@@ -16,10 +16,13 @@ const Start = ({ navigation }) => {
     '#474056',
     '#8A95A5',
     '#B9C6AE',
-  ]);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [name, setName] = useState('');
+  ]); // all colors used in the app, starting with font color, followed by background colors
+  const [selectedColor, setSelectedColor] = useState('#090C08'); // color selected by the user, starting with the second color
+  const [name, setName] = useState(''); // name typed in by the user
 
+  {
+    /* leave styling before return statement, otherwise state of colors cannot be read in styles */
+  }
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -29,8 +32,8 @@ const Start = ({ navigation }) => {
     appTitle: {
       fontSize: 45,
       fontWeight: 'bold',
-        color: 'white',
-        marginBottom: 300,
+      color: 'white',
+      marginBottom: 300,
     },
     chatChoice: {
       height: '44%',
@@ -45,9 +48,9 @@ const Start = ({ navigation }) => {
       justifyContent: 'center',
       alignItems: 'center',
       width: '88%',
-      borderColor: 'black',
+      borderColor: colors[0],
       borderWidth: 1,
-        borderRadius: 3,
+      borderRadius: 3,
     },
     personSvg: {
       marginLeft: 10,
@@ -60,18 +63,18 @@ const Start = ({ navigation }) => {
       borderWidth: 0,
       color: colors[0],
       fontSize: 16,
-      fontWeight: 600,
+      fontWeight: '600',
       opacity: 0.5,
     },
     chooseBackground: {
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        },
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     chooseBackgroundText: {
       color: colors[0],
       fontSize: 16,
-      fontWeight: 300,
+      fontWeight: '300',
       opacity: 1,
       marginTop: 10,
       marginBottom: 10,
@@ -108,7 +111,7 @@ const Start = ({ navigation }) => {
     },
     startChatText: {
       color: 'white',
-      fontWeight: 600,
+      fontWeight: '600',
       textAlign: 'center',
       alignSelf: 'center',
       margin: 0,
@@ -136,10 +139,15 @@ const Start = ({ navigation }) => {
           />
         </View>
         <View style={styles.chooseBackground}>
-          <Text style={styles.chooseBackgroundText}>Choose Background Color:</Text>
+          <Text style={styles.chooseBackgroundText}>
+            Choose Background Color:
+          </Text>
           <View style={styles.colorContainer}>
-            {colors.slice(1).map((color) => (
+            {// colors are mapped to create color presentation
+            colors.slice(1).map((color) => (
+              // border is added to the selected color
               <View
+                key={color + 'Border'}
                 style={[
                   styles.colorPresentationBorder,
                   selectedColor === color
@@ -147,6 +155,7 @@ const Start = ({ navigation }) => {
                     : null,
                 ]}
               >
+                {/* color presentation without border */}
                 <TouchableOpacity
                   key={color}
                   style={[{ backgroundColor: color }, styles.colorPresentation]}
@@ -156,10 +165,16 @@ const Start = ({ navigation }) => {
             ))}
           </View>
         </View>
+        {/* Start Chat Button */}
         <TouchableOpacity
           style={styles.startChatButton}
           title="Enter chat"
-          onPress={() => navigation.navigate('Chat', { name: name })}
+          onPress={() =>
+            navigation.navigate('Chat', {
+              name: name,
+              selectedColor: selectedColor,
+            })
+          }
         >
           <Text style={styles.startChatText}>Start Chatting</Text>
         </TouchableOpacity>
