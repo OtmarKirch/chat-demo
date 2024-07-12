@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import PersonSvg from './PersonSvg'; // symbol used in input box for the user name
 
@@ -172,12 +174,18 @@ const Start = ({ navigation }) => {
           onPress={() =>
             navigation.navigate('Chat', {
               name: name,
+              colors: colors,
               selectedColor: selectedColor,
             })
           }
         >
           <Text style={styles.startChatText}>Start Chatting</Text>
         </TouchableOpacity>
+        {Platform.OS === 'ios' ? 
+          <KeyboardAvoidingView behavior="padding" />
+         : null}
+        { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+        
       </View>
     </ImageBackground>
   );
