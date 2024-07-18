@@ -8,10 +8,31 @@ import {
   ImageBackground,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import PersonSvg from './PersonSvg'; // graphic used in input box in front of user name
 
+import { getAuth, signInAnonymously } from 'firebase/auth';
+
 const Start = ({ navigation }) => {
+  const auth = getAuth();
+
+  const signInUser = () => {
+    signInAnonymously(auth)
+    .then(result => {
+      navigation.navigate('Chat', {
+        userID: result.user.uid,
+        name: name,
+        colors: colors,
+        selectedColor: selectedColor,
+      });
+      Alert.alert('Signed in successfully');
+    }
+    ).catch(error => {
+      Alert.alert('Error signing in');
+    })
+  }
+
   const [colors, setColors] = useState([
     '#757083',
     '#090C08',
@@ -184,13 +205,7 @@ const Start = ({ navigation }) => {
         <TouchableOpacity
           style={styles.startChatButton}
           title="Enter chat"
-          onPress={() =>
-            navigation.navigate('Chat', {
-              name: name,
-              colors: colors,
-              selectedColor: selectedColor,
-            })
-          }
+          onPress={() => signInUser()}
         >
           <Text style={styles.startChatText}>Start Chatting</Text>
         </TouchableOpacity>
