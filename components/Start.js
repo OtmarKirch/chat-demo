@@ -40,7 +40,7 @@ const Start = ({ navigation }) => {
     '#8A95A5',
     '#B9C6AE',
   ]); // all colors used in the app, starting with font color, followed by background colors
-  const [selectedColor, setSelectedColor] = useState('#090C08'); // color selected by the user, starting with the second color
+  const [selectedColor, setSelectedColor] = useState('#090C08'); // color selected by the user, second color as default
   const [name, setName] = useState(''); // name typed in by the user
 
   
