@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Chat = ({ route, navigation, db }) => {
   const { name, colors, selectedColor, userID } = route.params;
@@ -83,6 +84,7 @@ const Chat = ({ route, navigation, db }) => {
         createdAt: new Date(doc.data().createdAt.toMillis()),
       })
       });
+      cacheMessages(allMessages);
       setMessages(allMessages);
     });
 
@@ -91,6 +93,15 @@ const Chat = ({ route, navigation, db }) => {
       if (unsubChat) unsubChat();
     }
   }, []);
+
+  const cacheMessages = async () => {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(messages));
+    }
+    catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  }
 
 
   return (
