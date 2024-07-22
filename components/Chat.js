@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected}) => {
   const { name, colors, selectedColor, userID } = route.params;
@@ -62,8 +63,8 @@ const Chat = ({ route, navigation, db, isConnected}) => {
   let unsubChat
   useEffect(() => {
     if (isConnected === true) {
-      if (unsubChat) unsubChat();
-      unsubChat = null;
+      // if (unsubChat) unsubChat();
+      // unsubChat = null;
     navigation.setOptions({ title: name });
 
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
@@ -99,6 +100,9 @@ const Chat = ({ route, navigation, db, isConnected}) => {
     }
   }
 
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  }
 
   return (
     // Chat screen with the selected background color
@@ -107,6 +111,7 @@ const Chat = ({ route, navigation, db, isConnected}) => {
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        renderActions={renderCustomActions}
         onSend={(newMessages) => onSend(newMessages)}
         user={{
           _id: userID,
