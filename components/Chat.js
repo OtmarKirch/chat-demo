@@ -7,7 +7,7 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
@@ -55,6 +55,11 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     );
   };
 
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
+  }
+
   let unsubChat
   useEffect(() => {
     if (isConnected === true) {
@@ -100,6 +105,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
         onSend={(newMessages) => onSend(newMessages)}
         user={{
           _id: userID,
