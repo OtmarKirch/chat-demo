@@ -1,18 +1,28 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, LogBox, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNetInfo } from '@react-native-community/netinfo';
 import Start from './components/Start';
 import Chat from './components/Chat';
 
 const Stack = createNativeStackNavigator();
 
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-
+import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 
 
 export default function App() {
+const connectionStatus = useNetInfo()
+
+useEffect(()=>{
+  if (connectionStatus.isConnected === false) {
+    Alert.alert("Connection lost!")
+    disableNetwork(db)
+  } else if (connectionStatus.isConnected === true) {
+    enableNetwork(db)
+  }
+}, [connectionStatus.isConnected])
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCT5XY85QIn1XBB8weJAvD3ItXQiOxwUVY",
@@ -35,7 +45,11 @@ const db = getFirestore(app);
         {/* Add the screens here */}
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat">
-          {props => <Chat {...props} db={db} />}
+          {props => <Chat 
+          {...props} 
+          db={db}
+          isConnected={connectionStatus.isConnected}
+          />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

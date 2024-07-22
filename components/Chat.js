@@ -10,7 +10,7 @@ import {
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   const { name, colors, selectedColor, userID } = route.params;
 
   const [messages, setMessages] = useState([]);
@@ -20,6 +20,11 @@ const Chat = ({ route, navigation, db }) => {
   const backgroundColors = colorsReverse.filter(
     (color) => color !== selectedColor
   );
+
+  const loadCachedMessages = async () => {
+    const cachedMessages = await AsyncStorage.getItem('messages') || '[]';
+    setMessages(JSON.parse(cachedMessages));
+  }
 
   const onSend = (newMessages) => {
     //setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
@@ -50,32 +55,13 @@ const Chat = ({ route, navigation, db }) => {
     );
   };
 
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       _id: 1,
-  //       text: 'Hello developer',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 2,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //     {
-  //       _id: 2,
-  //       text: 'This is a system message',
-  //       createdAt: new Date(),
-  //       system: true,
-  //     },
-  //   ]);
-  // }, []);
-
+  let unsubChat
   useEffect(() => {
+    if (isConnected === true) {
     navigation.setOptions({ title: name });
 
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    const unsubChat = onSnapshot(q, (documentsSnapshot) => {
+    unsubChat = onSnapshot(q, (documentsSnapshot) => {
       let allMessages = [];
       documentsSnapshot.forEach(doc => {
         allMessages.push({ 
@@ -87,12 +73,16 @@ const Chat = ({ route, navigation, db }) => {
       cacheMessages(allMessages);
       setMessages(allMessages);
     });
+    } else {
+      loadCachedMessages();
+    }
 
     // Clean up code
     return () => {
       if (unsubChat) unsubChat();
+      unsubChat = null;
     }
-  }, []);
+  }, [isConnected]);
 
   const cacheMessages = async () => {
     try {
