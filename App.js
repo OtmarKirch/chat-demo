@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, LogBox, Alert } from 'react-native';
+import { useEffect } from 'react';
+import { LogBox, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -15,6 +15,8 @@ import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore"
 export default function App() {
 const connectionStatus = useNetInfo()
 
+LogBox.ignoreLogs(['Async Storage has been extracted from']);
+
 useEffect(()=>{
   if (connectionStatus.isConnected === false) {
     Alert.alert("Connection lost!")
@@ -23,7 +25,7 @@ useEffect(()=>{
     enableNetwork(db)
   }
 }, [connectionStatus.isConnected])
-// Your web app's Firebase configuration
+// Web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCT5XY85QIn1XBB8weJAvD3ItXQiOxwUVY",
   authDomain: "chat-demo-62ab1.firebaseapp.com",
@@ -55,12 +57,3 @@ const db = getFirestore(app);
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

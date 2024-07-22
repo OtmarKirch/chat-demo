@@ -1,8 +1,7 @@
-import { onSnapshot, collection, addDoc, query, where, orderBy } from 'firebase/firestore';
+import { onSnapshot, collection, addDoc, query, orderBy } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
@@ -10,7 +9,7 @@ import {
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected}) => {
   const { name, colors, selectedColor, userID } = route.params;
 
   const [messages, setMessages] = useState([]);
@@ -63,6 +62,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   let unsubChat
   useEffect(() => {
     if (isConnected === true) {
+      if (unsubChat) unsubChat();
+      unsubChat = null;
     navigation.setOptions({ title: name });
 
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
@@ -85,13 +86,13 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     // Clean up code
     return () => {
       if (unsubChat) unsubChat();
-      unsubChat = null;
+      
     }
   }, [isConnected]);
 
-  const cacheMessages = async () => {
+  const cacheMessages = async (allMessages) => {
     try {
-      await AsyncStorage.setItem('messages', JSON.stringify(messages));
+      await AsyncStorage.setItem('messages', JSON.stringify(allMessages));
     }
     catch (error) {
       console.log('AsyncStorage error: ' + error.message);
