@@ -32,7 +32,6 @@ In an era where mobile usage is paramount for tasks ranging from shopping to com
 
 ### Technical Requirements
 
-
 - The app must be written in React Native.
 - The app must be developed using Expo.
 - The app must be styled according to the given screen design.
@@ -44,3 +43,11 @@ In an era where mobile usage is paramount for tasks ranging from shopping to com
 - The app must store images in Firebase Cloud Storage.
 - The app must be able to read the user’s location data.
 
+## Setting up the App on your device
+
+- First, clone the project from [GitHub](https://github.com/OtmarKirch/chat-demo)
+- It is recommended to use Node.js 16.19.0 or lower to insure all functionalities. 
+- Install all dependencies within `package.json` with NPM
+- The app requires a Firestore database and a storage at [Google Firebase](https://firebase.google.com/). Replace the credentials of `firebaseConfig` in `App.js` with your own. Make the data public by setting the rules of the database and storage to `true`: Replace `allow read, write: if false` with `allow read, write: if true`. Set the method of authentication to anonymous.
+- You can test the app with [Expo](https://expo.dev/). Create an account and install Expo on your smartphone. Run `npm run start` or `npx expo start`. Then scan the QR code while with the Expo app.
+- Testing is also possible with Emulators - Xcode for iOs and Android Studio for Android devices. After starting Expo in the terminal, choose a for an emulated Android device or i for an emulated iOS device.
