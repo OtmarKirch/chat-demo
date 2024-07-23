@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected}) => {
@@ -63,8 +64,6 @@ const Chat = ({ route, navigation, db, isConnected}) => {
   let unsubChat
   useEffect(() => {
     if (isConnected === true) {
-      // if (unsubChat) unsubChat();
-      // unsubChat = null;
     navigation.setOptions({ title: name });
 
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
@@ -104,6 +103,24 @@ const Chat = ({ route, navigation, db, isConnected}) => {
     return <CustomActions {...props} />;
   }
 
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
   return (
     // Chat screen with the selected background color
     <View style={[styles.container, { backgroundColor: selectedColor }]}>
@@ -112,6 +129,7 @@ const Chat = ({ route, navigation, db, isConnected}) => {
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
         renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(newMessages) => onSend(newMessages)}
         user={{
           _id: userID,
