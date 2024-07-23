@@ -2,7 +2,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { uploadBytes, ref } from 'firebase/storage';
+import { uploadBytes, getDownloadURL, ref } from 'firebase/storage';
 
 const customActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
   const generateReference = (uri) => {
@@ -11,19 +11,37 @@ const customActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     return `${userID}-${timeStamp}-${imageName}`;
   }
 
+  const uploadAndSendImage = async (imageURI) => {
+    const uniqueRefString = generateReference(imageURI);
+        const response = await fetch(imageURI);
+        const blob = await response.blob();
+        const newUploadRef = ref(storage, uniqueRefString);
+        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+          console.log('File has been uploaded successfully');
+          const imageURL = await getDownloadURL(snapshot.ref);
+          onSend({ image: imageURL });
+        })
+  }
+
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissions?.granted) {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.canceled) {
         const imageURI = result.assets[0].uri;
-        const uniqueRefString = generateReference(imageURI);
-        const response = await fetch(imageURI);
-        const blob = await response.blob();
-        const newUploadRef = ref(storage, uniqueRefString);
-        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
-          console.log('File has been uploaded successfully');
-        }) 
+        uploadAndSendImage(imageURI);   
+      }
+      else Alert.alert("Permissions haven't been granted.");
+    }
+  }
+
+  const takePhoto = async () => {
+    let permissions = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissions?.granted) {
+      let result = await ImagePicker.launchCameraAsync();
+      if (!result.canceled) {
+        const imageURI = result.assets[0].uri;
+        await uploadAndSendImage(imageURI);
       }
       else Alert.alert("Permissions haven't been granted.");
     }
