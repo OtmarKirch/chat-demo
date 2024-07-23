@@ -9,6 +9,7 @@ import {
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapView from 'react-native-maps';
+import { Image } from 'react-native-expo-image-cache';
 import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected}) => {
@@ -115,6 +116,14 @@ const Chat = ({ route, navigation, db, isConnected}) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+        />
+      );
+    }
+    if (currentMessage.image) {
+      return (
+        <Image
+          source={{ uri: currentMessage.image }}
+          style={{ width: 200, height: 200 }}
         />
       );
     }
