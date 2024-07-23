@@ -1,38 +1,38 @@
-import { onSnapshot, collection, addDoc, query, orderBy } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native';
+  onSnapshot,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+} from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { View, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapView from 'react-native-maps';
-import { Image } from 'react-native-expo-image-cache';
 import CustomActions from './CustomActions';
 
-const Chat = ({ route, navigation, db, isConnected, storage}) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, colors, selectedColor, userID } = route.params;
 
   const [messages, setMessages] = useState([]);
 
-  // background colors for the chat bubbles, using colors except the selected color
+  // possible background colors for the chat bubbles, using all colors except the selected color
   const colorsReverse = [...colors].reverse();
   const backgroundColors = colorsReverse.filter(
     (color) => color !== selectedColor
   );
 
   const loadCachedMessages = async () => {
-    const cachedMessages = await AsyncStorage.getItem('messages') || '[]';
+    const cachedMessages = (await AsyncStorage.getItem('messages')) || '[]';
     setMessages(JSON.parse(cachedMessages));
-  }
-
-  const onSend = (newMessages) => {
-    //setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-    addDoc(collection(db, "messages"), newMessages[0]);
   };
 
+  const onSend = (newMessages) => {
+    addDoc(collection(db, 'messages'), newMessages[0]);
+  };
+
+  // styling chat bubbles
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -57,29 +57,30 @@ const Chat = ({ route, navigation, db, isConnected, storage}) => {
     );
   };
 
+  // denies input when disconnected by hiding input toolbar
   const renderInputToolbar = (props) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
-  }
+  };
 
-  let unsubChat
+  let unsubChat;
   useEffect(() => {
     if (isConnected === true) {
-    navigation.setOptions({ title: name });
+      navigation.setOptions({ title: name });
 
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    unsubChat = onSnapshot(q, (documentsSnapshot) => {
-      let allMessages = [];
-      documentsSnapshot.forEach(doc => {
-        allMessages.push({ 
-        id: doc.id, 
-        ...doc.data(),
-        createdAt: new Date(doc.data().createdAt.toMillis()),
-      })
+      const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+      unsubChat = onSnapshot(q, (documentsSnapshot) => {
+        let allMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          allMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
+        });
+        cacheMessages(allMessages);
+        setMessages(allMessages);
       });
-      cacheMessages(allMessages);
-      setMessages(allMessages);
-    });
     } else {
       loadCachedMessages();
     }
@@ -87,22 +88,20 @@ const Chat = ({ route, navigation, db, isConnected, storage}) => {
     // Clean up code
     return () => {
       if (unsubChat) unsubChat();
-      
-    }
+    };
   }, [isConnected]);
 
   const cacheMessages = async (allMessages) => {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(allMessages));
-    }
-    catch (error) {
+    } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
     }
-  }
+  };
 
   const renderCustomActions = (props) => {
     return <CustomActions storage={storage} userID={userID} {...props} />;
-  }
+  };
 
   const renderCustomView = (props) => {
     const { currentMessage } = props;
@@ -119,16 +118,8 @@ const Chat = ({ route, navigation, db, isConnected, storage}) => {
         />
       );
     }
-    if (currentMessage.image) {
-      return (
-        <Image
-          source={{ uri: currentMessage.image }}
-          style={{ width: 200, height: 200 }}
-        />
-      );
-    }
     return null;
-  }
+  };
 
   return (
     // Chat screen with the selected background color

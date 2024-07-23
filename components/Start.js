@@ -19,19 +19,19 @@ const Start = ({ navigation }) => {
 
   const signInUser = () => {
     signInAnonymously(auth)
-    .then(result => {
-      navigation.navigate('Chat', {
-        userID: result.user.uid,
-        name: name,
-        colors: colors,
-        selectedColor: selectedColor,
+      .then((result) => {
+        navigation.navigate('Chat', {
+          userID: result.user.uid,
+          name: name,
+          colors: colors,
+          selectedColor: selectedColor,
+        });
+        Alert.alert('Signed in successfully');
+      })
+      .catch((error) => {
+        Alert.alert('Error signing in');
       });
-      Alert.alert('Signed in successfully');
-    }
-    ).catch(error => {
-      Alert.alert('Error signing in');
-    })
-  }
+  };
 
   const [colors, setColors] = useState([
     '#757083',
@@ -39,12 +39,11 @@ const Start = ({ navigation }) => {
     '#474056',
     '#8A95A5',
     '#B9C6AE',
-  ]); // all colors used in the app, starting with font color, followed by background colors
+  ]); // array with all colors used in the app, starting with font color, followed by background colors
   const [selectedColor, setSelectedColor] = useState('#090C08'); // color selected by the user, second color as default
   const [name, setName] = useState(''); // name typed in by the user
 
-  
-  // leave styling before return statement, otherwise state of colors cannot be read in styles  
+  // leave styling before return statement, otherwise state of colors cannot be read in styles
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -218,7 +217,6 @@ const Start = ({ navigation }) => {
         <KeyboardAvoidingView behavior="height" />
       ) : null}
     </ImageBackground>
-    
   );
 };
 
