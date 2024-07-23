@@ -12,7 +12,7 @@ import MapView from 'react-native-maps';
 import { Image } from 'react-native-expo-image-cache';
 import CustomActions from './CustomActions';
 
-const Chat = ({ route, navigation, db, isConnected}) => {
+const Chat = ({ route, navigation, db, isConnected, storage}) => {
   const { name, colors, selectedColor, userID } = route.params;
 
   const [messages, setMessages] = useState([]);
@@ -101,7 +101,7 @@ const Chat = ({ route, navigation, db, isConnected}) => {
   }
 
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
+    return <CustomActions storage={storage} userID={userID} {...props} />;
   }
 
   const renderCustomView = (props) => {

@@ -4,16 +4,23 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { uploadBytes, ref } from 'firebase/storage';
 
-const customActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
+const customActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
+  const generateReference = (uri) => {
+    const timeStamp = (new Date()).getTime();
+    const imageName = uri.split("/")[uri.split("/").length - 1];
+    return `${userID}-${timeStamp}-${imageName}`;
+  }
+
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissions?.granted) {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.canceled) {
         const imageURI = result.assets[0].uri;
+        const uniqueRefString = generateReference(imageURI);
         const response = await fetch(imageURI);
         const blob = await response.blob();
-        const newUploadRef = ref(storage, 'image123');
+        const newUploadRef = ref(storage, uniqueRefString);
         uploadBytes(newUploadRef, blob).then(async (snapshot) => {
           console.log('File has been uploaded successfully');
         }) 
@@ -42,9 +49,9 @@ const customActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
 
   const onActionPress = () => {
     const options = [
-      'Choose From Library',
-      'Take Picture',
-      'Send Location',
+      'Choose From Library', // pickImage
+      'Take Picture', // takePhoto
+      'Send Location', // getLocation
       'Cancel',
     ];
     const cancelButtonIndex = options.length - 1;

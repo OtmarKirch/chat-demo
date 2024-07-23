@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { getStorage } from "firebase/storage";
+//import firebaseConfig from './secrets/firebaseConfig';
 import Start from './components/Start';
 import Chat from './components/Chat';
 
