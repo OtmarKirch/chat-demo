@@ -29,6 +29,12 @@ In this project, I leverage React Native, Expo, and Google Firestore Database to
 
 ## Technologies
 
+- React Native
+- Expo
+- Google Firestore Database
+- Google Firebase Storage
+- Gifted Chat Library
+
 ## Setup
 The app is not registered in the App Store or Google Play Store. Therefore, it can only be run locally. The following steps are necessary to run the app on your smartphone or emulator.
 
